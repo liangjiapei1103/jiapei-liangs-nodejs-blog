@@ -1,10 +1,13 @@
 var mongodb = require('./db'),
 	markdown = require('markdown').markdown;
 
-function Post(name, title, post) {
+function Post(name, head, title, tags, post) {
 	this.name = name;
+	this.head = head;
 	this.title = title;
 	this.post = post;
+	this.tags = tags;
+
 }
 
 module.exports = Post;
@@ -24,10 +27,13 @@ Post.prototype.save = function(callback) {
 	// 要存入数据库的文档
 	var post = {
 		name: this.name,
+		head: this.head,
 		time: time,
 		title: this.title,
+		tags: this.tags,
 		post: this.post,
-		comments: []
+		comments: [],
+		pv: 0
 	};
 
 	// 打开数据库
@@ -132,6 +138,20 @@ Post.getOne = function(name, day, title, callback) {
 				// 解析 markdown 为 html
 				
 				if (doc) {
+					// 每访问一次，pv值增加1
+					collection.update({
+						"name": name,
+						"title": title,
+						"time.day" : day,
+					}, {
+						$inc: {"pv" : 1}
+					}, function(err) {
+						mongodb.close();
+						if (err) {
+							return callback(err);
+						}
+					});
+
 					doc.post = markdown.toHTML(doc.post);
 					doc.comments.forEach(function (comment) {
 						comment.content = markdown.toHTML(comment.content);
@@ -270,3 +290,92 @@ Post.getArchive = function(callback) {
 	});
 };
 
+Post.getTags = function(callback) {
+	mongodb.open(function (err, db) {
+		if (err) {
+			return callback(err);
+		}
+		db.collection('posts', function (err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			// distinct 用来找出给定键的所有不同值
+			collection.distinct("tags", function (err, docs) {
+				mongodb.close();
+				if (err) {
+					return callback(err);
+				}
+				callback(null, docs);
+			});
+		});
+	});
+};
+
+// 返回含特定标签的所有文章
+Post.getTag = function(tag, callback) {
+	mongodb.open(function (err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		db.collection('posts', function (err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			// 查询所有 tags 数组包含 tag 的文档
+			// 并返回只含有 name, time, title 组成的数组
+			collection.find({
+				"tags": tag
+			}, {
+				"name": 1,
+				"time": 1,
+				"title": 1
+			}).sort({
+				time: -1
+			}).toArray(function (err, docs) {
+				mongodb.close();
+				if (err) {
+					return callback(err);
+				}
+				callback(null, docs);
+			});
+		});
+	});
+};
+
+// 返回通过标题关键字查询的所有文章信息
+Post.search = function (keyword, callback) {
+	mongodb.open(function (err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		db.collection('posts', function (err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			var pattern = new RegExp(keyword, "i");
+			collection.find({
+				"title": pattern
+			}, {
+				"name": 1,
+				"time": 1,
+				"title": 1
+			}).sort({
+				time: -1
+			}).toArray(function (err, docs) {
+				mongodb.close();
+				if (err) {
+					return callback(err);
+				}
+				callback(null, docs);
+			});
+		});
+	});
+};
