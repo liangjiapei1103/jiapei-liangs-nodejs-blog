@@ -1,4 +1,8 @@
-var mongodb = require('./db');
+var mongodb = require('mongodb').MongoClient;
+var settings = require('../settings');
+var crypto = require('crypto');
+var url = 'mongodb://liangjiapei1103:12345678@ds047345.mongolab.com:47345/jiapei-liangs-blog';
+
 
 function User(user) {
 	this.name = user.name;
@@ -22,7 +26,7 @@ User.prototype.save = function(callback) {
 	};
 
 	// 打开数据库
-	mongodb.open(function(err, db) {
+	mongodb.connect(url, function(err, db) {
 		if (err) {
 			return callback(err); // 错误，返回err信息
 		}
@@ -30,13 +34,13 @@ User.prototype.save = function(callback) {
 		// 读取users集合
 		db.collection('users', function(err, collection) {
 			if (err) {
-				mongodb.close();
+				db.close();
 				return callback(err); // 错误，返回err信息
 			}
 
 			// 将用户数据插入users集合
 			collection.insert(user, {safe: true}, function(err, user) {
-				mongodb.close();
+				db.close();
 				if (err) {
 					return callback(err); // 错误，返回err信息
 				}
@@ -50,7 +54,7 @@ User.prototype.save = function(callback) {
 // 读取用户信息
 User.get = function(name, callback) {
 	// 打开数据库
-	mongodb.open(function(err, db) {
+	mongodb.connect(url, function(err, db) {
 		if (err) {
 			return callback(err); // 错误，返回err信息
 		}
@@ -58,7 +62,7 @@ User.get = function(name, callback) {
 		// 读取users集合
 		db.collection('users', function(err, collection) {
 			if (err) {
-				mongodb.close();
+				db.close();
 				return callback(err); // 错误，返回err信息
 			}
 
@@ -66,7 +70,7 @@ User.get = function(name, callback) {
 			collection.findOne({
 				name: name
 			}, function(err, user) {
-				mongodb.close();
+				db.close();
 				if (err) {
 					return callback(err); // 错误，返回err信息
 				}

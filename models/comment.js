@@ -1,4 +1,7 @@
-var mongodb = require('./db');
+var mongodb = require('mongodb').MongoClient;
+var settings = require('../settings');
+var url = 'mongodb://liangjiapei1103:12345678@ds047345.mongolab.com:47345/jiapei-liangs-blog';
+
 
 function Comment(name, day, title, comment) {
 	this.name = name;
@@ -17,7 +20,7 @@ Comment.prototype.save = function(callback) {
 		comment = this.comment;
 
 	// 打开数据库
-	mongodb.open(function (err, db) {
+	mongodb.connect(url, function (err, db) {
 		if (err) {
 			return callback(err);
 		}
@@ -25,7 +28,7 @@ Comment.prototype.save = function(callback) {
 		// 读取posts集合
 		db.collection('posts', function (err, collection) {
 			if (err) {
-				mongodb.close();
+				db.close();
 				return callback(err);
 			}
 
@@ -37,7 +40,7 @@ Comment.prototype.save = function(callback) {
 			}, {
 				$push: {"comments": comment}
 			}, function (err) {
-				mongodb.close();
+				db.close();
 				if (err) {
 					return callback(err);
 				}

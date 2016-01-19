@@ -14,6 +14,9 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var multer = require('multer');
 
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+
 var app = express(); //生成一个express实例app
 
 var fs = require('fs');
@@ -45,18 +48,33 @@ app.use(multer({
   }
 }));
 
+// var url = 'mongodb://liangjiapei1103:12345678@ds047075.mongolab.com:47075/heroku_bp27wbjt';
+// app.use(session({
+//   secret: settings.cookieSecret,
+//   key: settings.db, //cookie name
+//   cookie: {maxAge: 1000 * 60 * 60 * 24 * 30}, //30 days
+//   // resave: true,
+//   // saveUninitialized: true,
+//   store: new MongoStore({ url: url })
+//   // store: new MongoStore({
+//   //   db: settings.db,
+//   //   host: settings.host,
+//   //   port: settings.port
+//   //  })
+// }));
+
+var url = 'mongodb://liangjiapei1103:12345678@ds047345.mongolab.com:47345/jiapei-liangs-blog';
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected correctly to server.");
+  db.close();
+});
+
 app.use(session({
-  secret: settings.cookieSecret,
-  key: settings.db, //cookie name
-  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30}, //30 days
-  // resave: true,
-  // saveUninitialized: true,
-  store: new MongoStore({ url: 'mongodb://localhost/blog' })
-  // store: new MongoStore({
-  //   db: settings.db,
-  //   host: settings.host,
-  //   port: settings.port
-  //  })
+  resave: true,
+  saveUninitialized: true,
+  secret: "hi",
+  store: new MongoStore({ url : 'mongodb://liangjiapei1103:12345678@ds047345.mongolab.com:47345/jiapei-liangs-blog'})
 }));
 
 app.use(express.static(path.join(__dirname, 'public'))); // 设置public文件夹为存放静态文件的目录
