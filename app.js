@@ -48,21 +48,6 @@ app.use(multer({
   }
 }));
 
-// var url = 'mongodb://liangjiapei1103:12345678@ds047075.mongolab.com:47075/heroku_bp27wbjt';
-// app.use(session({
-//   secret: settings.cookieSecret,
-//   key: settings.db, //cookie name
-//   cookie: {maxAge: 1000 * 60 * 60 * 24 * 30}, //30 days
-//   // resave: true,
-//   // saveUninitialized: true,
-//   store: new MongoStore({ url: url })
-//   // store: new MongoStore({
-//   //   db: settings.db,
-//   //   host: settings.host,
-//   //   port: settings.port
-//   //  })
-// }));
-
 var url = 'mongodb://liangjiapei1103:12345678@ds047345.mongolab.com:47345/jiapei-liangs-blog';
 MongoClient.connect(url, function(err, db) {
   assert.equal(null, err);
