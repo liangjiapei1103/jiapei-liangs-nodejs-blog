@@ -302,3 +302,5 @@
 ::ffff:127.0.0.1 - - [Wed, 27 Jan 2016 03:37:32 GMT] "GET /stylesheets/style.css HTTP/1.1" 304 - "http://localhost:3000/tags" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:42.0) Gecko/20100101 Firefox/42.0"
 ::1 - - [Sun, 31 Jan 2016 02:45:07 GMT] "GET / HTTP/1.1" 200 1267 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36"
 ::1 - - [Sun, 31 Jan 2016 02:45:07 GMT] "GET /stylesheets/style.css HTTP/1.1" 200 2001 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36"
+::1 - - [Sun, 31 Jan 2016 02:55:10 GMT] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36"
+::1 - - [Sun, 31 Jan 2016 02:55:10 GMT] "GET /stylesheets/style.css HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36"
